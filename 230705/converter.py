@@ -2,7 +2,7 @@ import csv
 import json
 
 # JSON 파일 읽기
-with open('users.json', 'r') as json_file:
+with open('users.json', 'r', encoding="utf-8") as json_file:
     data = json.load(json_file)
 
 users = data['users']
