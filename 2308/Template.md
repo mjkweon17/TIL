@@ -4,4 +4,10 @@
 
 ### IT News
 
+### AI
+
+### Algorithm
+
+### Computer Science
+
 ### KuccLib
