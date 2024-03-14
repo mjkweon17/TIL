@@ -47,8 +47,25 @@
         print(user.name)  # 'John Doe' 출력
     ````
 
+### stmt
+- `stmt`는 SQLAlchemy에서 사용되는 변수 이름
+- SQL 문(statement)을 나타냄
+- SQL 쿼리를 구성하고, 실행하기 위한 명령이나 요청을 표현하는 데 사용되는 SQLAlchemy의 객체 또는 표현식
+- `stmt`는 보통 `select()`, `insert()`, `update()`, `delete()` 등의 함수를 사용해 생성되며, 이를 통해 데이터베이스와의 상호작용을 추상화하고, SQL 쿼리를 직접 작성하는 대신 Python 코드로 데이터베이스 작업을 수행할 수 있음.
+- 예시
+    - `select()` 함수를 사용하여 특정 테이블에서 데이터를 조회하는 쿼리를 만들 수 있음
+    ```python
+    from sqlalchemy import select
 
+    stmt = select([User.name]).where(User.id == 1)
 
+    result = session.execute(stmt)
+    for row in result:
+        print(row.name)
+    ```
+    - 위 코드에서 `stmt`는 `User` 테이블에서 `id`가 1인 사용자의 `name`을 조회하는 SQL 쿼리를 나타냄
+    - SQLAlchemy를 사용하면 이러한 `stmt` 객체를 만들어 데이터베이스 쿼리를 보다 쉽고 안전하게 구성할 수 있으며, SQL 삽입 공격 같은 보안 문제를 방지하는 데도 도움이 됨.
+    - `session.execute(stmt)`는 `stmt`에 해당하는 SQL 쿼리를 데이터베이스에 보내 실행하고, 그 결과를 받아옴. 이 방식을 통해 SQL 쿼리를 추상화하여 데이터베이스 작업을 수행할 수 있음.
 
 ## Pydantic
 
