@@ -47,6 +47,30 @@
         print(user.name)  # 'John Doe' 출력
     ````
 
+### backref, back_populates
+- `relationship`은 양방향 관계를 정의할 때 양쪽 테이블에 사용될 수 있음. 이를 통해 모델 간의 관계를 보다 명확하게 표현하고, 양쪽 방향에서 관련 객체에 쉽게 접근할 수 있게 됨. 양방향 관계를 설정함으로써, 한 쪽에서 변경이 발생했을 때 다른 쪽도 자동으로 업데이트되는 등의 장점이 있음.
+- 양방향 관계는 `backref`와 `back_populates` 옵션을 사용하여 구현할 수 있음.
+- `backref`는 관계가 선언된 쪽에서 반대 쪽으로의 접근을 자동으로 추가할 때 사용됨. `backref`는 관계의 반대편에 자동으로 속성을 생성하며, 이를 통해 반대편 모델에서도 관계를 쉽게 참조할 수 있게 됨.
+- `back_populates`는 두 모델 간의 관계를 서로 명시적으로 설정할 때 사용됩니다. 이 옵션을 사용하면, 각 모델에서 반대 모델로의 관계를 명확하게 지정해야 함. `back_populates`는 더 명시적이며 복잡한 관계 설정에 유용함.
+- 예시
+    - `User`와 `Address` 테이블의 양방향 관계
+    - `User`와 `Address`가 1:N 관계를 가지며, 양방향 관계를 설정하는 예시
+    ```python
+    class User(Base):
+        __tablename__ = 'users'
+        id = Column(Integer, primary_key=True)
+        name = Column(String)
+        addresses = relationship("Address", back_populates="user")
+
+    class Address(Base):
+        __tablename__ = 'addresses'
+        id = Column(Integer, primary_key=True)
+        email = Column(String, nullable=False)
+        user_id = Column(Integer, ForeignKey('users.id'))
+        user = relationship("User", back_populates="addresses")
+    ```
+    - `User` 모델의 `addresses` 속성과 `Address` 모델의 `user` 속성은 서로를 참조하여 양방향 관계를 형성함. 이를 통해, `User` 객체에서 해당 사용자의 모든 주소에 쉽게 접근할 수 있으며, `Address` 객체에서도 해당 주소를 소유한 사용자에게 쉽게 접근할 수 있음.
+
 ### stmt
 - `stmt`는 SQLAlchemy에서 사용되는 변수 이름
 - SQL 문(statement)을 나타냄
