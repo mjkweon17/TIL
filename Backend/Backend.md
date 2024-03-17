@@ -31,3 +31,6 @@
     - Let's Encrypt 인증서는 90일마다 갱신해야 함. Certbot은 자동 갱신을 위한 스크립트를 제공함.
 - AWS에서 제공하는 추가 서비스, 예를 들어 AWS Certificate Manager(ACM)를 사용하여 SSL/TLS 인증서를 관리하는 방법도 있음. ACM을 사용하면 AWS 클라우드 내에서 인증서를 쉽게 관리할 수 있지만, 일반적으로 ELB(로드 밸런서) 또는 CloudFront와 같은 다른 AWS 서비스와 함께 사용됨.
 - https://chat.openai.com/share/ed5dcc8e-1f4d-4fcb-892d-1cca4175d5af
+
+### 기타 용어
+TODO: 이벤트 기반 트래픽
