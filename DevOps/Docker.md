@@ -51,6 +51,32 @@
     - -d: 컨테이너를 백그라운드에서 실행합니다.
     - --name: 컨테이너의 이름을 설정합니다. 여기서는 container_name으로 설정합니다.
 
+### 명령어 잘 사용하기
+- docker stop, docker rm, docker rmi 명령어가 실행되었을 때, 적어도 하나 이상의 컨테이너 또는 이미지가 실행 중이거나 존재해야 함. 그렇지 않으면 실행할 대상이 없다는 에러가 발생함. 아래와 같이 실행 중이거나 존재하는 대상이 없는 경우를 대비하여 조건을 체크하는 로직을 추가할 수 있음
+    -  예시
+        ```bash
+        CONTAINERS=$(docker ps -q)
+        if [ -n "$CONTAINERS" ]; then
+        docker stop $CONTAINERS
+        fi
+        STOPPED_CONTAINERS=$(docker ps -a -q)
+        if [ -n "$STOPPED_CONTAINERS" ]; then
+        docker rm $STOPPED_CONTAINERS
+        fi
+        IMAGES=$(docker images -aq)
+        if [ -n "$IMAGES" ]; then
+        docker rmi -f $IMAGES
+        fi
+        ```
+        - 여기서 -n은 쉘 스크립트에서 문자열을 테스트할 때 사용하는 조건 플래그. -z도 사용 가능.
+        - -n: 주어진 문자열에 값이 있을 때 참을 반환. 즉, 문자열이 비어있지 않으면 참(true)
+        - -z: 주어진 문자열이 "null" 이거나 길이가 0인지를 검사. 만약 문자열이 비어있으면 참(true)을 반환
+- Docker CLI를 사용하여 로그인할 때 --password 옵션으로 비밀번호를 직접 입력하는 것이 보안상 안전하지 않음. 대신 --password-stdin 옵션을 사용하여 표준 입력을 통해 비밀번호를 안전하게 전달하도록 권장됨.
+    - 예시
+        ```bash
+        echo $CR_PASSWORD | docker login -u $CR_USERNAME --password-stdin $CR_REGISTRY
+        ```    
+
 ### 포트 바인딩, 포트 매핑
 - 네트워크 통신에서 컨테이너와 외부 세게 간의 연결을 설정하는 데 사용되는 개념
 - 특히 Docker와 같은 컨테이너 기술에서 이 두 용어는 컨테이너가 호스트의 네트워크 인터페이스와 어떻게 통신하는지를 정의하는 데 중요함
@@ -97,3 +123,11 @@
     - 암호화: 공개 키를 사용하여 데이터를 암호화하면, 해당 데이터는 해당 공개 키와 쌍을 이루는 비밀 키를 가진 사용자만이 복호화할 수 있음. 이는 이메일, 파일 등의 보안 전송을 보장함.
     - 디지털 서명: 문서나 메시지에 디지털 서명을 할 때, 발신자의 비밀 키를 사용하여 생성함. 수신자는 발신자의 공개 키를 사용하여 서명을 검증할 수 있음. 이는 데이터의 무결성과 발신자의 인증을 보장함.
 - Docker 설치와 관련된 GPG 키: Docker를 설치할 때 사용하는 GPG 키는 Docker의 패키지 저장소가 실제로 Docker Inc.에 의해 관리되고 있으며 안전하다는 것을 보증함. 즉, 설치하려는 소프트웨어 패키지가 변조되지 않았음을 확인할 수 있는 역할을 함. 이 과정은 사용자가 신뢰할 수 있는 소스로부터 소프트웨어를 받고 있다는 추가적인 보증을 제공함.
+
+
+
+TODO:
+    도커 이미지의 ID는 어떻게 알 수 정해지지?
+    registry name인가?
+    아닌데
+    뭐였지
