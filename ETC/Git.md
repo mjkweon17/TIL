@@ -36,3 +36,35 @@
 - git revert HEAD
     - 가장 마지막 커밋을 취소하는 새로운 커밋을 생성
         - 변경 사항을 되돌리지만, 원래 커밋은 히스토리에 남아 있음
+
+### 새로운 브랜치 만들기
+1. 터미널을 열고 Git 저장소로 이동합니다.
+    ```
+    cd /path/to/your/repo
+    ```
+2. 현재 브랜치를 확인합니다.
+    ```
+    git branch
+    ```
+3. 새로운 브랜치를 생성합니다.
+
+    ```
+    git branch new-branch-name
+    ```
+4. 새로 생성한 브랜치로 전환합니다.
+
+    ```
+    git checkout new-branch-name
+    ```
+5. 원격 저장소에 새 브랜치를 푸시합니다.
+
+    ```
+    git push -u origin new-branch-name
+    ```
+
+
+- 3번과 4번 과정을 한 번에 할 수 있는 단축 명령어
+    ```
+    git checkout -b new-branch-name
+    ```
+    - 이 명령어는 새 브랜치를 생성하고 바로 전환까지 해줌.
