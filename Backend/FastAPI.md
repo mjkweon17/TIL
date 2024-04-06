@@ -91,6 +91,17 @@
     - SQLAlchemy를 사용하면 이러한 `stmt` 객체를 만들어 데이터베이스 쿼리를 보다 쉽고 안전하게 구성할 수 있으며, SQL 삽입 공격 같은 보안 문제를 방지하는 데도 도움이 됨.
     - `session.execute(stmt)`는 `stmt`에 해당하는 SQL 쿼리를 데이터베이스에 보내 실행하고, 그 결과를 받아옴. 이 방식을 통해 SQL 쿼리를 추상화하여 데이터베이스 작업을 수행할 수 있음.
 
+### Alembic
+- SQLAlchemy를 위한 경량, 데이터베이스 마이그레이션 도구
+- 데이터베이스 스키마의 버전 관리를 용이하게 해주며, 개발자가 데이터베이스 스키마 변경 사항을 쉽게 추적, 수정 및 적용할 수 있도록 도와줌
+- FastAPI에서 Alembic을 사용하는 것은 FastAPI 애플리케이션의 데이터 모델이 시간에 따라 변경될 때 일관성을 유지하고 데이터베이스 마이그레이션을 관리하는 데 있어 매우 유용함
+
+### Alembic 주요 기능
+- 버전 관리: Alembic은 코드 베이스 내에서 데이터베이스 스키마의 버전을 관리함. 각 마이그레이션은 순차적으로 적용되며, 각 변경에는 고유한 식별자가 있음.
+- 마이그레이션 스크립트 생성: Alembic은 변경 사항을 기반으로 마이그레이션 스크립트를 자동 생성할 수 있음. 개발자는 이 스크립트를 수정하여 필요에 맞게 조정할 수 있음.
+- 업그레이드 및 다운그레이드: Alembic을 사용하면 데이터베이스 스키마를 새 버전으로 업그레이드하거나, 필요한 경우 이전 버전으로 다운그레이드할 수 있음.
+- 자동 및 수동 마이그레이션: Alembic은 자동으로 마이그레이션 스크립트를 생성할 수 있지만, 복잡한 스키마 변경이나 데이터 변환은 수동으로 스크립트를 작성해야 할 수도 있음
+
 ## Pydantic
 
 ### 스키마 이름을 지을 때 고려사항
@@ -116,140 +127,130 @@ Pydantic에서는 `Field` 함수 외에도 모델의 데이터 검증, 변환, �
 - Pydantic 모델이 ORM 객체를 읽을 수 있도록 해줌.
 - 이 방식을 사용하면 SQLAlchemy 모델과 Pydantic 모델 간의 변환이 용이해짐
 
+### Validators 
+- `@validator` 데코레이터
+- Pydantic의 `@validator` 데코레이터를 사용하여 모델 필드에 대한 사용자 정의 검증 함수를 작성할 수 있음
+- 이를 통해 복잡한 검증 로직을 구현하거나, 필드 값이 특정 조건을 만족하는지 체크할 수 있음
+- 예시
+    ```python
+    from pydantic import BaseModel, validator
 
+    class UserModel(BaseModel):
+        name: str
+        age: int
 
-### 1. **Validators (`@validator` 데코레이터)**
-Pydantic의 `@validator` 데코레이터를 사용하여 모델 필드에 대한 사용자 정의 검증 함수를 작성할 수 있습니다. 이를 통해 복잡한 검증 로직을 구현하거나, 필드 값이 특정 조건을 만족하는지 체크할 수 있습니다.
+        @validator('age')
+        def check_age(cls, value):
+            if value < 18:
+                raise ValueError('Age must be at least 18')
+            return value
+    ```
 
-```python
-from pydantic import BaseModel, validator
+### Root Validators 
+- `@root_validator` 데코레이터를 사용하여 모델 전체에 대한 검증을 수행할 수 있음
+- 이는 모델의 여러 필드 간 관계를 검증할 때 유용함
+- 예시
+    ```python
+    from pydantic import BaseModel, root_validator
 
-class UserModel(BaseModel):
-    name: str
-    age: int
+    class LocationModel(BaseModel):
+        latitude: float
+        longitude: float
 
-    @validator('age')
-    def check_age(cls, value):
-        if value < 18:
-            raise ValueError('Age must be at least 18')
-        return value
-```
+        @root_validator
+        def check_coordinates(cls, values):
+            latitude, longitude = values.get('latitude'), values.get('longitude')
+            if not (-90 <= latitude <= 90):
+                raise ValueError('Latitude must be between -90 and 90.')
+            if not (-180 <= longitude <= 180):
+                raise ValueError('Longitude must be between -180 and 180.')
+            return values
+    ```
 
+### Default Factory 
+=- `Field` 함수의 `default_factory` 인자를 사용하여 필드의 기본값을 동적으로 생성할 수 있음
+- 이는 매 인스턴스 생성 시마다 새로운 기본값을 생성해야 할 때 유용함.
+- 예시
+    ```python
+    from pydantic import BaseModel, Field
+    from datetime import datetime
 
+    class LogEntry(BaseModel):
+        timestamp: datetime = Field(default_factory=datetime.now)
+    ```
 
+### Field Description (`Field` 함수)
+- 앞서 언급한 것처럼, `Field` 함수를 사용하여 필드의 메타데이터(예: 타이틀, 설명, 예제 값 등)를 정의할 수 있음.
+- 이 메타데이터는 문서 자동 생성 등에 활용됨.
 
-### 2. **Root Validators (`@root_validator` 데코레이터)**
-`@root_validator` 데코레이터를 사용하여 모델 전체에 대한 검증을 수행할 수 있습니다. 이는 모델의 여러 필드 간 관계를 검증할 때 유용합니다.
+### Constrained Types
+- Pydantic은 길이, 범위, 정규 표현식 검사 등을 위한 제약 조건이 적용된 타입을 제공함.
+- 예를 들어, `conint`, `constr` 등이 있으며, 이를 통해 필드 값에 추가적인 제약 조건을 적용할 수 있음.
+- 이러한 기능들을 통해 Pydantic 모델의 정의를 더욱 세밀하게 제어하고, 데이터의 검증 및 변환 과정을 보다 풍부하게 구성할 수 있음.
+- 예시
+    ```python
+    from pydantic import BaseModel, constr, conint
 
-```python
-from pydantic import BaseModel, root_validator
+    class RestrictedModel(BaseModel):
+        limited_str: constr(min_length=2, max_length=10)
+        limited_int: conint(gt=0, lt=100)
+    ```
 
-class LocationModel(BaseModel):
-    latitude: float
-    longitude: float
+### Complex Field Types
+- Pydantic은 리스트, 딕셔너리, 유니언 등 복잡한 데이터 타입의 검증을 지원함.
+- 예시 
+    ```python
+    from pydantic import BaseModel
+    from typing import List, Dict, Union
 
-    @root_validator
-    def check_coordinates(cls, values):
-        latitude, longitude = values.get('latitude'), values.get('longitude')
-        if not (-90 <= latitude <= 90):
-            raise ValueError('Latitude must be between -90 and 90.')
-        if not (-180 <= longitude <= 180):
-            raise ValueError('Longitude must be between -180 and 180.')
-        return values
-```
+    class ComplexModel(BaseModel):
+        list_of_ints: List[int]
+        string_to_float_map: Dict[str, float]
+        complex_union: Union[int, str]
+    ```
 
-### 3. **Default Factory (`default_factory` 인자)**
-`Field` 함수의 `default_factory` 인자를 사용하여 필드의 기본값을 동적으로 생성할 수 있습니다. 이는 매 인스턴스 생성 시마다 새로운 기본값을 생성해야 할 때 유용합니다.
+### Generic Models
+- Pydantic 모델은 제네릭을 지원하여, 타입 매개변수를 통해 모델의 유연성을 높일 수 있음.
+- 이를 통해 다양한 타입의 데이터를 처리하는 하나의 모델을 정의할 수 있음.
+- 예시
+    ```python
+    from pydantic import BaseModel, GenericModel
+    from typing import TypeVar, Generic
 
-```python
-from pydantic import BaseModel, Field
-from datetime import datetime
+    T = TypeVar('T')
 
-class LogEntry(BaseModel):
-    timestamp: datetime = Field(default_factory=datetime.now)
-```
+    class GenericResponseModel(GenericModel, Generic[T]):
+        data: T
+        success: bool
+    ```
 
-### 4. **Field Description (`Field` 함수)**
-앞서 언급한 것처럼, `Field` 함수를 사용하여 필드의 메타데이터(예: 타이틀, 설명, 예제 값 등)를 정의할 수 있습니다. 이 메타데이터는 문서 자동 생성 등에 활용됩니다.
+### Custom Data Types
+- 사용자 정의 데이터 타입을 생성하여, Pydantic 모델에서 사용할 수 있음. 
+- 이를 통해 특수한 검증 로직이나 변환 로직을 데이터 타입에 직접 적용할 수 있음.
 
-### 5. **Constrained Types**
-Pydantic은 길이, 범위, 정규 표현식 검사 등을 위한 제약 조건이 적용된 타입을 제공합니다. 예를 들어, `conint`, `constr` 등이 있으며, 이를 통해 필드 값에 추가적인 제약 조건을 적용할 수 있습니다.
+### Settings Management
+- Pydantic은 환경 변수나 설정 파일을 통한 애플리케이션 설정 관리를 위한 기능을 제공함.
+- `BaseSettings` 클래스를 활용하여 설정 값을 모델로 정의하고, 환경변수에서 자동으로 값을 로드할 수 있음
+- 예시
+    ```python
+    from pydantic import BaseSettings
 
-```python
-from pydantic import BaseModel, constr, conint
+    class AppConfig(BaseSettings):
+        app_name: str
+        admin_email: str
 
-class RestrictedModel(BaseModel):
-    limited_str: constr(min_length=2, max_length=10)
-    limited_int: conint(gt=0, lt=100)
-```
+        class Config:
+            env_file = ".env"
+    ```
 
-이러한 기능들을 통해 Pydantic 모델의 정의를 더욱 세밀하게 제어하고, 데이터의 검증 및 변환 과정을 보다 풍부하게 구성할 수 있습니다.
+### Model Inheritance
+- 모델 간 상속을 통해 코드의 재사용성을 높이고, 모델 정의를 간결하게 유지할 수 있음
+- 부모 모델의 필드와 검증 로직을 상속받아 새로운 모델을 쉽게 정의할 수 있음
 
+### Aliases and Field Mapping
+- `Field` 함수의 `alias` 매개변수를 사용하여 모델 필드의 외부 이름을 정의할 수 있음
+- 이는 JSON과 같은 외부 데이터 소스와 모델을 매핑할 때 유용함.
 
-
-Pydantic은 데이터 검증 및 설정 관리를 위한 파이썬 라이브러리로, 다양한 고급 기능과 유틸리티를 제공합니다. 앞서 언급한 기능 외에도, Pydantic은 여러 고급 사용 사례를 지원하는 기능들을 포함하고 있습니다. 이러한 기능들을 활용하면 보다 강력하고 유연한 데이터 모델링이 가능합니다.
-
-### 6. **Complex Field Types**
-Pydantic은 리스트, 딕셔너리, 유니언 등 복잡한 데이터 타입의 검증을 지원합니다. 이를 통해 다양한 데이터 구조를 모델링하고 검증할 수 있습니다.
-
-```python
-from pydantic import BaseModel
-from typing import List, Dict, Union
-
-class ComplexModel(BaseModel):
-    list_of_ints: List[int]
-    string_to_float_map: Dict[str, float]
-    complex_union: Union[int, str]
-```
-
-### 7. **Generic Models**
-Pydantic 모델은 제네릭을 지원하여, 타입 매개변수를 통해 모델의 유연성을 높일 수 있습니다. 이를 통해 다양한 타입의 데이터를 처리하는 하나의 모델을 정의할 수 있습니다.
-
-```python
-from pydantic import BaseModel, GenericModel
-from typing import TypeVar, Generic
-
-T = TypeVar('T')
-
-class GenericResponseModel(GenericModel, Generic[T]):
-    data: T
-    success: bool
-```
-
-### 8. **Custom Data Types**
-사용자 정의 데이터 타입을 생성하여, Pydantic 모델에서 사용할 수 있습니다. 이를 통해 특수한 검증 로직이나 변환 로직을 데이터 타입에 직접 적용할 수 있습니다.
-
-### 9. **Settings Management**
-Pydantic은 환경 변수나 설정 파일을 통한 애플리케이션 설정 관리를 위한 기능을 제공합니다. `BaseSettings` 클래스를 활용하여 설정 값을 모델로 정의하고, 환경변수에서 자동으로 값을 로드할 수 있습니다.
-
-```python
-from pydantic import BaseSettings
-
-class AppConfig(BaseSettings):
-    app_name: str
-    admin_email: str
-
-    class Config:
-        env_file = ".env"
-```
-
-### 10. **Model Inheritance**
-모델 간 상속을 통해 코드의 재사용성을 높이고, 모델 정의를 간결하게 유지할 수 있습니다. 부모 모델의 필드와 검증 로직을 상속받아 새로운 모델을 쉽게 정의할 수 있습니다.
-
-### 11. **Aliases and Field Mapping**
-`Field` 함수의 `alias` 매개변수를 사용하여 모델 필드의 외부 이름을 정의할 수 있습니다. 이는 JSON과 같은 외부 데이터 소스와 모델을 매핑할 때 유용합니다.
-
-### 12. **Post-Parsing Processing with `@validator`**
-`@validator` 데코레이터를 활용한 후처리를 통해, 파싱된 데이터에 추가적인 변환 로직을 적용할 수 있습니다. 이는 데이터를 최종적으로 사용하기 전에 필요한 조정을 가능하게 합니다.
-
-Pydantic의 이러한 고급 기능들은 강력한 데이터 검증, 변환, 모델링을 위한 훌륭한 도구를 제공합니다. 이를 통해 코드의 가독성, 안정성, 그리고 유지보수성을 크게 향상시킬 수 있습니다.
-
-
-
-
-
-
-
-## FastAPI
-
-
+### Post-Parsing Processing with `@validator`
+- `@validator` 데코레이터를 활용한 후처리를 통해, 파싱된 데이터에 추가적인 변환 로직을 적용할 수 있음
+- 이는 데이터를 최종적으로 사용하기 전에 필요한 조정을 가능하게 함
