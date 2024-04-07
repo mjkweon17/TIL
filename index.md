@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 블로그 메인 페이지
+title: index.md
 ---
 
 <h1>최근 포스트</h1>
