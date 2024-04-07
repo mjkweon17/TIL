@@ -1,6 +1,7 @@
-# TIL
-Today I Learned...
-
+---
+layout: default
+title: index.md
+---
 
 <h1>최근 포스트</h1>
 

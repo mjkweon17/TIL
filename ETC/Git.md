@@ -47,24 +47,52 @@
     git branch
     ```
 3. 새로운 브랜치를 생성합니다.
-
     ```
     git branch new-branch-name
     ```
 4. 새로 생성한 브랜치로 전환합니다.
-
     ```
     git checkout new-branch-name
     ```
 5. 원격 저장소에 새 브랜치를 푸시합니다.
-
     ```
     git push -u origin new-branch-name
     ```
-
 
 - 3번과 4번 과정을 한 번에 할 수 있는 단축 명령어
     ```
     git checkout -b new-branch-name
     ```
     - 이 명령어는 새 브랜치를 생성하고 바로 전환까지 해줌.
+
+### 현재 작업 중인 브랜치 삭제하기
+- 현재 작업 중인 브랜치를 삭제하려면, 먼저 다른 브랜치로 전환해야 함. 삭제할 브랜치에서는 삭제 작업을 할 수 없기 때문.
+
+1. 삭제할 브랜치가 아닌 다른 브랜치로 전환합니다. 일반적으로 main 브랜치로 전환함.
+    ```
+    git checkout main
+    ```
+2. 삭제할 브랜치를 확인함.
+    ```
+    git branch
+    ```
+3. 로컬 브랜치를 삭제함.
+    ```
+    git branch -d branch-to-delete
+    ```
+    만약 브랜치에 머지되지 않은 변경 사항이 있다면, Git은 경고 메시지를 표시하고 삭제를 진행하지 않음. 이 경우, 강제로 삭제하려면 `-D` 옵션을 사용.
+    ```
+    git branch -D branch-to-delete
+    ```
+4. 원격 저장소에서도 브랜치를 삭제하려면 다음 명령어를 사용.
+    ```
+    git push origin --delete branch-to-delete
+    ```
+    이렇게 하면 로컬과 원격 저장소 모두에서 브랜치가 삭제됩니다.
+- 주의: 브랜치를 삭제하면 해당 브랜치에서의 작업 내용이 모두 사라지므로, 필요한 변경 사항은 미리 다른 브랜치에 머지하는 것이 좋음. 삭제 전에는 꼭 브랜치의 상태를 확인해야 함.
+
+### publish branch
+- VS Code의 Git 기능을 사용할 때, 새로운 브랜치를 만들고 커밋했지만 `git push -u origin new-branch-name` 명령을 실행하지 않았다면, VS Code는 "Publish Branch"라는 옵션을 표시함.
+- "Publish Branch"는 VS Code에서 제공하는 기능으로, 아직 원격 저장소에 푸시되지 않은 로컬 브랜치를 원격 저장소에 푸시할 수 있게 해줌. 이 기능은 essentially `git push -u origin new-branch-name` 명령과 동일한 작업을 수행함.
+- 따라서 "Publish Branch"를 클릭하면, VS Code는 현재 브랜치를 원격 저장소에 푸시하고, 로컬 브랜치와 원격 브랜치를 연결함. 이후에는 `git push`나 `git pull` 명령을 사용할 때 브랜치 이름을 명시하지 않아도 됨.
+- 이는 VS Code가 제공하는 편의 기능 중 하나로, Git 명령을 직접 입력하지 않고도 쉽게 원격 저장소와 상호 작용할 수 있도록 도와줌. 하지만 이 기능은 Git의 기본 기능을 대체하는 것은 아니므로, 터미널에서 Git 명령을 직접 사용할 수도 있음.
