@@ -6,6 +6,9 @@
 - 스키마 이름 예시
     - BookmarkBase, BookmarkCreate, BookmarkUpdate, BookmarkResponse, BookmarkList, BookmarkPartialUpdate, BookmarkDeleteResponse, BookmarkDetail, BookmarkSearchResults
 
+### model_dump()
+- model_dump() dict()는 모두 딕셔너리 형태로 만들어 줌. dict()는 중첩된 것들은 딕셔너리로 만들어주지 않지만, model_dump()는 중첩된 모델들도 딕셔너리로 만들어줌. 그래서 model_dump()를 쓰는 게 더 좋을 거 같음. model_dump()안에 exclude_unset=True를 적어주면 설정되지 않은 필드를 결과에서 제외하도록 할 수 있음. 즉, 클라이언트에서 제공하지 않은 필드는 무시하고, 제공한 필드만 딕셔너리로 변경.
+
 ### field definitions
 - `None`과 `...`
     - 필드 검증 및 기본 값을 어떻게 할지에 따라 선택
