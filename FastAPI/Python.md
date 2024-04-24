@@ -33,9 +33,6 @@
 - 하지만 C 라이브러리를 사용할 때는 메모리 관리와 같은 저수준 문제를 직접 다뤄야 하므로 주의가 필요함.
 - 대표적인 C 라이브러리로는 stdio.h, math.h, string.h 등이 있으며, 파이썬의 표준 라이브러리 중 일부도 내부적으로 C로 구현되어 있음.
 
-
-## 코드
-
 ### os로 환경변수 파일 읽기
 ```python
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')

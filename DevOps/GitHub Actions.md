@@ -1,5 +1,4 @@
 ### docker/login-action@v1
-
 ```yml
     - name: Login to Kakao Cloud Container Registry
       uses: docker/login-action@v1
