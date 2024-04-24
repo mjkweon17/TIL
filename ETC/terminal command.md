@@ -34,6 +34,7 @@
     - 이러한 권한 플래그를 조합하여 사용자나 그룹에 특정 권한을 부여하거나 제거할 수 잇음. icacls 명령을 사용할 때는 필요한 권한만 부여하고, 불필요한 권한은 제거하는 것이 보안상 좋은 방법.
 
 ### ssh 접속
+- ssh ubuntu@210.109.52.43 -p 22
 - ssh -i C:\Users\explo\Desktop\kubook-backend\src\kucc-lib-key1.pem ubuntu@210.109.53.23 -p 22
 
 - ssh -i <keyfile_path> <username>@<host> -p <port>
