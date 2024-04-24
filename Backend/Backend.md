@@ -1,10 +1,33 @@
-### 기타 용어
-TODO: 이벤트 기반 트래픽, EDA(Event Driven Architecture)
+### TODO
+- 이벤트 기반 트래픽, EDA(Event Driven Architecture)
     - 볼 것: https://techblog.woowahan.com/7835/
     - https://www.youtube.com/watch?v=BnS6343GTkY
-TODO: 볼 거
-    - OAuth 2.0 and OpenID Connect (in plain English)
-        - https://www.youtube.com/watch?v=996OiexHze0
+
+### 응답 코드
+- 200: GET, PUT
+- 201: POST
+- 204: DELETE
+- https://juna-dev.tistory.com/16
+
+### Dependency
+- 코드에서 두 모듈 간의 연결
+- OOP에서는 두 클래스 간의 관계라고도 말함
+- 일반적으로 둘 중 하나가 다른 하나를 어떤 용도를 위해 사용함
+- Dependency가 위험한 이유
+    - 하나의 모듈이 바뀌면 의존한 다른 모듈가지 변경이 이루어지기 때문
+    - 테스트 가능한 어플을 만들 때 의존성이 있으면 유닛테스트 작성이 어려움 -> 유닛테스트의 목적 자체가 다른 모듈로부터 독립적으로 테스트하는 것을 요구하기 때문
+- https://tony-programming.tistory.com/entry/Dependency-%EC%9D%98%EC%A1%B4%EC%84%B1-%EC%9D%B4%EB%9E%80
+
+### Dependency Injection
+- Dependency가 위험한 이유를 해결하기 위해 사용
+- 디자인 패턴으로 모듈이나 컴포넌트의 의존성을 런타임에 주입할 수 있도록 함
+- 궁극적인 목적: 관심사 분리
+- DIP(Dependency Injection Principle)
+    - SOLID 원칙 중 하나
+    - 상위 모듈을 하위 모듈에 의존해서는 안된다. 둘다 추상화에 의존해야 한다.
+    - 추상화는 세부 사항에 의존해서는 안된다. 세부사항이 추상화에 의존해야 한다.
+- FastAPI에서는 Depends, django에서는 dictionary를 이용하여 DI를 함
+- https://velog.io/@heyoni/Dependency-Injection
 
 ### Nginx
 - 소프트웨어 웹 서버: HTTP 프로토콜을 이용해 사용자의 웹 브라우저와 통신함. 대표적인 웹 서버 소프트웨어로는 Apache, Nginx, Microsoft IIS 등이 있음. 이 소프트웨어는 사용자로부터 웹 페이지 접근 요청을 받으면, 해당하는 웹 페이지나 파일을 찾아 사용자에게 전송함.

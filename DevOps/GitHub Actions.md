@@ -1,3 +1,6 @@
+### &{{}}처럼 괄호를 두 개 겹치는 이유
+- 괄호 안의 값을 변수로 취급하기 위해. 만약 괄호를 한 개만 겹치면 괄호 안의 값을 문자열로 취급함.
+
 ### docker/login-action@v1
 ```yml
     - name: Login to Kakao Cloud Container Registry

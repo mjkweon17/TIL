@@ -1,3 +1,9 @@
+### db kill session
+- db에 쿼리를 날렸는데 아래와 같은 에러가 발생함
+    - ERROR 2013 Lost connection to MySQL server during query
+- abort 시키고 다른 쿼리를 날려도 계속 같은 에러가 발생함
+- ncp console로 들어가서 문제가 되는 db를 선택한 후 process list에 들어가서 session을 kill함
+
 ### UNIQUE(`auth_type`, `auth_id`)
 - UNIQUE(auth_type, auth_id) 구문: auth_type과 auth_id의 조합이 전체 테이블에서 고유해야 함을 의미
 

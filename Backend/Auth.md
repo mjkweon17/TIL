@@ -1,3 +1,40 @@
+### OAuth2
+- 인증(authentication)과 권한부여(authorization)를 다루게 해주는 사양
+- OAuth2는 통신을 어떻게 암호화할지 명시하지 않음. 대신 HTTPS를 사용하기를 기대함.
+
+### OpenID Connect
+- OAuth2를 기반으로 한 specification으로, OAuth2에서 모호한 몇 가지 사항을 지정함
+- 구글 로그인은 OpenID Connect를 사용
+- 페이스북 로그인은 사용하지 않고 자체 OAuth2를 사용
+- OpenID Connect와 OpenID는 다름! OpenID도 비슷한 문제를 해결하려고 했지만, OAuth2를 기반으로 하지 않음. 또한, 현재는 잘 사용되지 않음.
+
+### OpenAPI
+- a.k.a. Swagger
+- API를 빌드하기 위한 open specification
+- FastAPI는 OpenAPI를 기반으로 함
+- multiple security schemes를 정의할 수 있음 -> 아래의 표준 기반 도구들을 사용할 수 있게 해주는 장점
+    - apiKey
+        - query parameter, header, cookie
+    - http: 표준 HTTP 인증 시스템
+        - bearer, HTTP Basic authentication, HTTP Digest
+    - oauth2: 보안을 다루기 위한 모든 OAuth2 방법(flows라고 부름). 아래의 flows들은 OAuth 2.0 authentication provider를 building하기 위해 적합함
+        - implicit, clientCrendentials, authorizationCode
+        - password(동일한 애플리케이션에서 인증을 직접적으로 다루게 해주는 특정한 flow)
+    - openIdConnect: OAuth2 인증 데이터를 자동으로 발견하게 해줌
+- FastAPI는 각각의 security schemes를 fastapi.utility 모듈에서 제공함
+
+### OAuth 2.0 possible errors
+- Invalid redirect URL
+- Unrecognized client_id
+- The user denies the request
+- Invalid parameters
+    - invalid_request
+    - unauthorized_client
+    - unsupported_response_type
+    - invalid_scope
+    - server_error
+    - temporarily_unavailable
+
 ### ID 공급업체
 - Identity Provider
 - 사용자의 신원을 확인하고 인증하는 서비스를 제공하는 업체

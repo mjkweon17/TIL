@@ -1,3 +1,8 @@
+### stage, unstage 상태 차이
+- stage 영역: 커밋할 파일들을 모아둔 영역
+- stage: 파일을 스테이지 영역에 추가
+- unstage: 스테이지 영역에서 파일을 제거
+
 ### git log
 - git log
     - 모든 커밋 히스토리  나열
@@ -29,6 +34,14 @@
     - 주의해서 사용해야 함
 - git reset --hard HEAD~1
     - 가장 마지막 커밋을 취소하고, 해당 커밋의 변경 사항들을 작업 디렉토리에서도 제거
+
+- commit 취소 후 파일들을 staged 상태로
+    - git reset --soft HEAD^
+- commit 취소 후 파일들을 unstaged 상태로
+    - git reset --mixed HEAD^
+    - git reset HEAD^
+    - git reset HEAD~2 //마지막 2개의 commit을 취소
+    - git reset --hard HEAD^ //현재 브랜치를 이전 커밋으로 되돌리기
 
 - git revert
     - 특정 커밋의 변경 사항을 취소하는 새로운 커밋을 생성
